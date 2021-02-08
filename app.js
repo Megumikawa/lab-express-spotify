@@ -1,7 +1,9 @@
 require('dotenv').config();
 
+const { Router } = require('express');
 const express = require('express');
 const hbs = require('hbs');
+const router = require("express").Router();
 
 // require spotify-web-api-node package here:
 const SpotifyWebApi = require('spotify-web-api-node');
@@ -26,7 +28,7 @@ spotifyApi
 
 // Our routes go here:
 //--home page--
-app.get('/', (req, res) => {
+app.get('/', (req, res, next) => {
   res.render('home.hbs')
 })
 
@@ -36,22 +38,35 @@ app.get('/artist-search', (req,res, next) => {
 
   spotifyApi
   .searchArtists(req.query.search)
-  .then((data) => {
-    console.log('The received data from the API: ', data.body.artists.items);
+  .then(data => {
+    // console.log('The received data from the API: ', data.body.artists.items);
     // ----> 'HERE WHAT WE WANT TO DO AFTER RECEIVING THE DATA FROM THE API'
     res.render('artist-search-results.hbs', {artists: data.body.artists.items})
   })
   .catch(err => console.log('The error while searching artists occurred: ', err));
 })
 
+//----Albums------//
 app.get('/albums/:artistId', (req, res, next) => {
-  // .getArtistAlbums() code goes here
-  console.log(data.body.items)
   spotifyApi
-  .getArtistAlbums(req.params.id)
-  .then((data) => {
-    res.render('albums.hbs', {albums:data.body.items})
+  .getArtistAlbums(req.params.artistId)
+  .then(album => {
+    console.log('The received data from the API: ', album.body.items)
+    res.render('albums.hbs', {albums:album.body.items})
   })
+  .catch(err => console.log('The error while searching artists occurred: ', err));
+});
+
+
+//---tracks-----//
+app.get('/tracks/:trackId', (req, res, next) => {
+  spotifyApi
+  .getAlbumTracks(req.params.trackId)
+  .then(track => {
+    // console.log('The received data from the API: ', track.body.items)
+    res.render('tracks.hbs', {tracks:track.body.items})
+  })
+  .catch(err => console.log('The error while searching artists occurred: ', err));
 });
 
 
