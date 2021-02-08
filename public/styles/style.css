@@ -1,3 +1,10 @@
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .form-control {
-  width: 20%;
+  margin: 50px 0 30px;
 }
